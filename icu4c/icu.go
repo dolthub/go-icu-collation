@@ -20,7 +20,8 @@ package icu4c
 
 // #cgo CPPFLAGS: -I${SRCDIR} -DU_STATIC_IMPLEMENTATION=1 -DU_COMMON_IMPLEMENTATION=1 -DU_I18N_IMPLEMENTATION=1 -DU_CHARSET_IS_UTF8=1
 // #cgo CXXFLAGS: -std=c++17
-// #cgo LDFLAGS: -lstdc++ -lm
+// #cgo LDFLAGS: -lm
+// #cgo linux LDFLAGS: -lstdc++
 // #include "unicode/uversion.h"
 //
 // static void icu4c_version(char *out) {
