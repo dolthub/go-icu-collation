@@ -15,7 +15,6 @@
 package icu4c
 
 // #include "unicode/udata.h"
-// #include "unicode/ucol.h"
 // #include "unicode/utypes.h"
 // #include <stdlib.h>
 // #include <string.h>
@@ -37,38 +36,12 @@ package icu4c
 //     udata_setFileAccess(UDATA_NO_FILES, &status);
 //     return "";
 // }
-//
-// // Compute the ICU sort key for a UTF-16 string under locale's collation into
-// // out (capacity cap). Returns the key length, or -1 if the collator fails to
-// // open (with u_errorName written to err). Warnings (root/parent fallback) are
-// // not failures.
-// static int icu4c_sortkey(const char *locale, const UChar *s, int slen,
-//                          uint8_t *out, int cap, char *err, int errcap) {
-//     UErrorCode status = U_ZERO_ERROR;
-//     UCollator *coll = ucol_open(locale, &status);
-//     if (coll == NULL || U_FAILURE(status)) {
-//         if (err != NULL && errcap > 0) {
-//             const char *name = u_errorName(status);
-//             int i = 0;
-//             for (; name[i] != 0 && i < errcap - 1; i++) err[i] = name[i];
-//             err[i] = 0;
-//         }
-//         if (coll != NULL) {
-//             ucol_close(coll);
-//         }
-//         return -1;
-//     }
-//     int n = ucol_getSortKey(coll, s, slen, out, cap);
-//     ucol_close(coll);
-//     return n;
-// }
 import "C"
 
 import (
 	_ "embed"
 	"fmt"
 	"sync"
-	"unicode/utf16"
 	"unsafe"
 )
 
@@ -96,36 +69,14 @@ func ensureData() error {
 	return dataErr
 }
 
-// SortKey returns the ICU collation sort key for s under locale's collation.
-// Two strings equal under the collation share a key, and keys order bytewise the
-// same way the collator orders strings. It is the primitive used to fingerprint
-// a locale's collation, so a trimmed data blob can be checked against the full
-// one for every locale.
+// SortKey returns the collation sort key for s under locale's default collation.
+// It is a convenience wrapper around Open; callers that reuse a collation should
+// Open a Collator once and call its SortKey method.
 func SortKey(locale, s string) ([]byte, error) {
-	if err := ensureData(); err != nil {
+	c, err := Open(locale)
+	if err != nil {
 		return nil, err
 	}
-	cLocale := C.CString(locale)
-	defer C.free(unsafe.Pointer(cLocale))
-
-	u16 := utf16.Encode([]rune(s))
-	var src *C.UChar
-	if len(u16) > 0 {
-		src = (*C.UChar)(unsafe.Pointer(&u16[0]))
-	}
-
-	var errBuf [64]C.char
-	out := make([]byte, 256)
-	n := C.icu4c_sortkey(cLocale, src, C.int(len(u16)), (*C.uint8_t)(unsafe.Pointer(&out[0])), C.int(len(out)), &errBuf[0], C.int(len(errBuf)))
-	if n < 0 {
-		return nil, fmt.Errorf("icu4c: ucol_open(%q) failed: %s", locale, C.GoString(&errBuf[0]))
-	}
-	if int(n) > len(out) {
-		out = make([]byte, int(n))
-		n = C.icu4c_sortkey(cLocale, src, C.int(len(u16)), (*C.uint8_t)(unsafe.Pointer(&out[0])), C.int(len(out)), &errBuf[0], C.int(len(errBuf)))
-		if n < 0 {
-			return nil, fmt.Errorf("icu4c: ucol_open(%q) failed: %s", locale, C.GoString(&errBuf[0]))
-		}
-	}
-	return out[:n], nil
+	defer c.Close()
+	return c.SortKey(s), nil
 }
