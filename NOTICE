@@ -1,0 +1,30 @@
+go-icu-collation
+Copyright 2026 Dolthub, Inc.
+
+This product's own source code -- the Go/cgo binding and build tooling -- is
+licensed under the Apache License, Version 2.0. See the LICENSE file.
+
+This product bundles a vendored copy of ICU (International Components for
+Unicode) in the icu4c/ directory:
+
+  - the ICU "common" and "i18n" C/C++ sources, compiled directly by the cgo
+    binding; and
+  - a trimmed, collation-only build of the ICU data (icu4c/icudt78l.dat).
+
+ICU is Copyright (C) Unicode, Inc. and others, and is licensed under the
+Unicode License V3 (SPDX: Unicode-3.0), a permissive license. Its full
+copyright and permission notice is retained verbatim in icu4c/ICU-LICENSE, and
+the individual ICU source files retain their own per-file copyright headers.
+The Unicode License V3 requires that this notice accompany all copies of the
+ICU code and data; icu4c/ICU-LICENSE and those per-file headers satisfy that
+requirement. No ICU file has been relicensed, and no ICU notice has been
+removed.
+
+Note: icu4c/ICU-LICENSE also reproduces third-party notices for various ICU
+data components, some under BSD, MIT, or GPL-with-linking-exception terms.
+Those notices cover ICU data categories -- for example the break-iterator
+word dictionaries and transliteration data -- that are NOT included in the
+collation-only data trim shipped in icu4c/icudt78l.dat (see icu4c/DATA.md).
+
+  ICU project:      https://icu.unicode.org/
+  Unicode License:  https://www.unicode.org/license.txt

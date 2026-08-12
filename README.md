@@ -41,5 +41,9 @@ required -- the module builds its own.
 
 ## License
 
-Apache-2.0 (this module's own code). Vendored ICU source carries its own
-license; see [ACKNOWLEDGEMENTS](./ACKNOWLEDGEMENTS).
+This module's own code is licensed under the Apache License, Version 2.0
+([LICENSE](./LICENSE)). It bundles a vendored copy of ICU (under `icu4c/`),
+which is under the Unicode License V3 ([icu4c/ICU-LICENSE](./icu4c/ICU-LICENSE)),
+retained verbatim per its terms. The Apache license covers only this module's
+code, not the vendored ICU. See [NOTICE](./NOTICE) for the full breakdown and
+[ACKNOWLEDGEMENTS](./ACKNOWLEDGEMENTS) for attribution.
