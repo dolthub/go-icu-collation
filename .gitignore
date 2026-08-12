@@ -1,0 +1,16 @@
+# Binaries and build output
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+*.test
+*.out
+
+# Go workspace / module cache artifacts
+go.work
+go.work.sum
+
+# Editor / OS cruft
+*.swp
+.DS_Store

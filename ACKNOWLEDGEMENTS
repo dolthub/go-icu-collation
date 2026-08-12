@@ -1,0 +1,19 @@
+This product is built on ICU (International Components for Unicode), a mature,
+widely used set of C/C++ libraries for Unicode support, software
+internationalization, and globalization. ICU is a project of the Unicode
+Consortium and is distributed under the Unicode License. Our gratitude to the
+ICU project and its many contributors, and to the Unicode Consortium, for
+decades of work on the Unicode Collation Algorithm and the CLDR locale
+tailorings this module depends on.
+
+  ICU project:      https://icu.unicode.org/
+  Unicode License:  https://www.unicode.org/license.txt
+
+When ICU source is vendored into this repository, it is included verbatim under
+its own license, and that license text accompanies the vendored source. This
+module adds only a thin Go/cgo binding over ICU's collation API; the collation
+behavior itself is ICU's.
+
+The packaging approach -- vendoring C source and building it statically via cgo
+-- follows the house style of dolthub/gozstd and dolthub/go-icu-regex. No code
+is shared with those projects.
