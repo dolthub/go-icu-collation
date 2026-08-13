@@ -40,6 +40,14 @@ package icu4c
 //     return (int)status;
 // }
 //
+// static int icu4c_ucol_get_attribute(UCollator *c, UColAttribute a, int *out) {
+//     UErrorCode status = U_ZERO_ERROR;
+//     UColAttributeValue v = ucol_getAttribute(c, a, &status);
+//     if (U_FAILURE(status)) return (int)status;
+//     *out = (int)v;
+//     return 0;
+// }
+//
 // static int icu4c_ucol_set_max_variable(UCollator *c, UColReorderCode group) {
 //     UErrorCode status = U_ZERO_ERROR;
 //     ucol_setMaxVariable(c, group, &status);
@@ -141,6 +149,18 @@ func (c *Collator) SetAttribute(attr Attribute, val AttributeValue) error {
 		return fmt.Errorf("icu4c: ucol_setAttribute(%d,%d): %s", attr, val, errorName(s))
 	}
 	return nil
+}
+
+// GetAttribute returns the collator's current value for one attribute. This
+// reflects the opened locale's tailoring plus any SetAttribute overrides, so it
+// exposes the resolved value (e.g. caseFirst=upper for a Danish collator that
+// was never told a caseFirst) that a caller needs to validate or report.
+func (c *Collator) GetAttribute(attr Attribute) (AttributeValue, error) {
+	var out C.int
+	if s := C.icu4c_ucol_get_attribute(c.ptr, C.UColAttribute(attr), &out); s > 0 {
+		return 0, fmt.Errorf("icu4c: ucol_getAttribute(%d): %s", attr, errorName(s))
+	}
+	return AttributeValue(out), nil
 }
 
 // SetMaxVariable sets the highest group treated as variable under shifted

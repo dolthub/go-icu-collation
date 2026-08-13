@@ -241,3 +241,26 @@ func TestConcurrentUse(t *testing.T) {
 	}
 	wg.Wait()
 }
+
+// TestGetAttributeResolvesTailoring confirms GetAttribute returns the locale's
+// tailored value, not a spec default: Danish resolves caseFirst to a non-off
+// value even though it was never set, while English resolves it to off.
+func TestGetAttributeResolvesTailoring(t *testing.T) {
+	da := newColl(t, "da")
+	cf, err := da.GetAttribute(CaseFirst)
+	if err != nil {
+		t.Fatalf("da GetAttribute(CaseFirst): %v", err)
+	}
+	if cf == Off {
+		t.Errorf("da caseFirst = Off, want tailored (upper/lower)")
+	}
+
+	en := newColl(t, "en")
+	cf, err = en.GetAttribute(CaseFirst)
+	if err != nil {
+		t.Fatalf("en GetAttribute(CaseFirst): %v", err)
+	}
+	if cf != Off {
+		t.Errorf("en caseFirst = %d, want Off", cf)
+	}
+}
